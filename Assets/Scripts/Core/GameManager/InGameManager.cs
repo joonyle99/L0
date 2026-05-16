@@ -27,8 +27,10 @@ public class InGameManager : MonoBehaviour
     [SerializeField] private HeroSlotController _summonSlotController;
     [SerializeField] private HeroSlotController _squadSlotController;
     [SerializeField] private SummonTrail _summonTrailPrefab;
+    [SerializeField] private float _prepareDuration = 30f;
     private SummonManager _summonManager;
     private SquadManager _squadManager;
+    private PrepareTimer _prepareTimer;
 
     [Space]
     
@@ -47,6 +49,7 @@ public class InGameManager : MonoBehaviour
         _gameStateController.OnStateChanged -= _cameraController.OnStateChanged;
         _gameStateController.OnStateChanged -= _uiController.OnStateChanged;
         if (SoundManager.Instance != null) _gameStateController.OnStateChanged -= SoundManager.Instance.OnStateChanged;
+        _gameStateController.OnStateChanged -= _prepareTimer.OnStateChanged;
     }
     
     // TODO: 호버 규칙 다시 확인해보기 (이후에)
@@ -55,6 +58,8 @@ public class InGameManager : MonoBehaviour
         // var screenPos = _inputProvider.GetScreenPos;
         // _summonSlotController.TryHoverAt(screenPos);
         // _squadSlotController.TryHoverAt(screenPos);
+
+        _prepareTimer.Tick(Time.deltaTime);
     }
 
     private void Initialize()
@@ -65,7 +70,8 @@ public class InGameManager : MonoBehaviour
         _goldSystem = new GoldSystem(999);
         _summonManager = new SummonManager(_heroDatabase, _summonConfig, _summonTable);
         _squadManager = new SquadManager(_squadConfig);
-        _summonManager.Initialize(_goldSystem.TrySpend);
+        _prepareTimer = new PrepareTimer(_prepareDuration);
+        _summonManager.Initialize(_goldSystem.TrySpend, _uiController.SetSummonCostText);
         _squadManager.Initialize();
         _summonSlotController?.Initialize(
             _summonManager,
@@ -81,6 +87,7 @@ public class InGameManager : MonoBehaviour
             OnSquadHeroDropped,
             null,
             null);
+        _prepareTimer.Initialize(_uiController.SetTimerText, null);
         _roundManager = new RoundManager(_roundTable);
         _battleManager = new BattleManager();
         _roundManager.Initialize(_ => _summonManager.ResetCost());
@@ -90,6 +97,7 @@ public class InGameManager : MonoBehaviour
         if (SoundManager.Instance != null) _gameStateController.OnStateChanged += SoundManager.Instance.OnStateChanged;
         _gameStateController.OnStateChanged += _uiController.OnStateChanged;
         _gameStateController.OnStateChanged += _cameraController.OnStateChanged;
+        _gameStateController.OnStateChanged += _prepareTimer.OnStateChanged;
         _gameStateController.ChangeState(InGameState.Prepare);
     }
 

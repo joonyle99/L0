@@ -12,6 +12,7 @@ public class SummonManager : IHeroBenchProvider
     public event Action OnHeroBenchChanged;
 
     private Func<int, bool> _trySpendGold;
+    private Action<int, int> _onSummonCostChanged;
 
     private int _currCost;
     public int CurrCost => _currCost;
@@ -23,12 +24,16 @@ public class SummonManager : IHeroBenchProvider
         _summonTable = summonTable;
 
         _heroBench = new HeroInstance[_summonConfig.capacity];
-        _currCost = _summonConfig.baseCost;
+        var prevCost = _summonConfig.baseCost;
+        var currCost = _summonConfig.baseCost;
+        _currCost = currCost;
+        _onSummonCostChanged?.Invoke(prevCost, currCost);
     }
 
-    public void Initialize(Func<int, bool> trySpendGold)
+    public void Initialize(Func<int, bool> trySpendGold, Action<int, int> onSummonCostChanged)
     {
         _trySpendGold = trySpendGold;
+        _onSummonCostChanged = onSummonCostChanged;
     }
 
     // === 소환 ===
@@ -44,14 +49,20 @@ public class SummonManager : IHeroBenchProvider
 
         var heroInstance = new HeroInstance(heroData);
         AddHeroToBench(heroInstance, -1);
-        _currCost += _summonConfig.costIncrement;
+        var prevCost = _currCost;
+        var currCost = prevCost + _summonConfig.costIncrement;
+        _currCost = currCost;
+        _onSummonCostChanged?.Invoke(prevCost, currCost);
 
         return true;
     }
 
     public void ResetCost()
     {
-        _currCost = _summonConfig.baseCost;
+        var prevCost = _currCost;
+        var currCost = _summonConfig.baseCost;
+        _currCost = currCost;
+        _onSummonCostChanged?.Invoke(prevCost, currCost);
     }
 
     // === ... 관리 ===

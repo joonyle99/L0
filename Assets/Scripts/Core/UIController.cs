@@ -29,6 +29,8 @@ public class UIController : MonoBehaviour, IGameStateListener<InGameState>
     }
 
     public void SetGoldText(int gold) => _hudPanel.SetGoldText(gold);
+    public void SetTimerText(float seconds) => _hudPanel.SetTimerText(seconds);
+    public void SetSummonCostText(int prevCost, int currCost) => _actionPanel.SetSummonCostText(prevCost, currCost);
 
     public Vector3 GetSummonButtonWorldPos()
     {

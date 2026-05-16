@@ -1,3 +1,4 @@
+using TMPro;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ public class ActionPanel : UIPanel
 {
     [SerializeField] private Button _summonButton;
     [SerializeField] private Button _battleButton;
+    [SerializeField] private TextMeshProUGUI _summonCost;
 
     private RectTransform _summonButtonRectTrans;
 
@@ -23,5 +25,10 @@ public class ActionPanel : UIPanel
 
         _summonButton.onClick.AddListener(() => onSummonClicked?.Invoke());
         _battleButton.onClick.AddListener(() => onBattleClicked?.Invoke());
+    }
+
+    public void SetSummonCostText(int prvCost, int currCost)
+    {
+        _summonCost.text = currCost.ToString();
     }
 }
