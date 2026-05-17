@@ -379,7 +379,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 973830292746123040, guid: e055975cdce6f1a43ab20dc455deae61, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1746052761146444674, guid: e055975cdce6f1a43ab20dc455deae61, type: 3}
       propertyPath: _size.x
@@ -5748,8 +5748,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActionPanel
   _summonButton: {fileID: 1792174700}
-  _summonCost: {fileID: 295953472}
   _battleButton: {fileID: 1375586103}
+  _summonCost: {fileID: 295953472}
 --- !u!225 &2110632432
 CanvasGroup:
   m_ObjectHideFlags: 0
